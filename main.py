@@ -13,47 +13,106 @@ class Library:
     self.books = {}
   
   def add_book(self, book):
-    self.books[book] = 'Available'
+    self.books[book] = True # True if available and False if not available
 
   def borrow_book(self, title):
-    pass
+    for book in self.books:
+      if book.title == title:
+        if self.books[book]:
+          self.books[book] = False
+          return f'"{title}" is borrow by you'
+        else:
+          return 'This book is not available'
+    return f'{title} is not in here'
+
+  def return_book(self,title):
+    for book in self.books:
+      if book.title == title:
+          self.books[book] = True
+          return f'You have return "{title}"'
+    return f'{title} is not in here'
+
+  def availability(self, title):
+    for book in self.books:
+      if book.title == title:
+        if self.books[book]:
+          return f'"{title}" is available'
+        else:
+          return f'"{title}" is not available'
+    return f'"{title}" is not in here'
 
 library = Library()
+
+def borrow_book():
+  user_input = input('What book do you want to borrow? ')
+  return library.borrow_book(user_input)
+
+def return_book():
+  user_input = input('WHat book do you want to return? ')
+  return library.return_book(user_input)
+
+def availability():
+  user_input = input('What book do you want to check? ')
+  return library.availability(user_input)
 
 def for_developer():
   global library
   while True:
-    title = input('what title book would you add?')
+    title = input('what title book would you add? ')
     if title == 'exit':
       break
     else:
-      author = input('Who is the author?')
-      publication_year = input('when is the book publish?')
+      author = input('Who is the author? ')
+      publication_year = input('when is the book publish? ')
 
     book = Book(title, author, publication_year)
     library.add_book(book)
 
+    print('The book have been added to the library')
+    print()
+
 def choices():
+  print('Options : ')
   print('1. Borrow book')
   print('2. Return book')
   print('3. Checking availability of book')
   print('4. see all of the books')
-  print('5. Exit')
+  print('5. Checking information of book')
+  print('6. Exit')
 
+def checking_user_input():
+  global switch
+  user_input = input()
+  if user_input == 'developer':
+    for_developer()
+  elif user_input == '1':
+    print(borrow_book())
+  elif user_input == '2':
+    print(return_book())
+  elif user_input == '3':
+    print(availability())
+  elif user_input == '6':
+    switch = False
+  else:
+    print('This is not an option')
+
+switch = True
 def main():
+  global switch
   print('Welcome to the library')
   print('How can i help you?')
 
-  switch = True
   
   while switch:
     choices()
-    user_input = input()
-    if user_input == 'developer':
-      for_developer()
+    checking_user_input()
 
 
 
+book1 = Book('Hello', 'me', 2024)
+library.add_book(book1)
+book2 = Book('Nice', 'you', 2000)
+library.add_book(book2)
 
 if __name__ == '__main__':
   main()
