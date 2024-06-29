@@ -27,40 +27,40 @@ class Library:
   
   def borrow_book(self, title):
     book, available = self._find_book(title)
-    if self.books[book]:
-      self.books[book] = False
+    if book and available:
+      self.books[title] = (book, False)
       return f'"{title}" is borrow by you'
     else:
-        return 'This book is not available'
-    return 
+      return f'"{title}" is not available'
 
   def return_book(self,title):
-    for book in self.books:
-      if book.title == title:
-          self.books[book] = True
-          return f'You have return "{title}"'
-    return f'{title} is not in here'
+    book, available = self._find_book(title)
+    if book:
+      if not available:
+        self.books[title] = (book, True)
+        return f'You have return "{title}"'
+      else:
+        return f'"{title}" has not been borrowed'
+    return f'"{title}" is not available'
 
   def availability(self, title):
-    for book in self.books:
-      if book.title == title:
-        if self.books[book]:
-          return f'"{title}" is available'
-        else:
-          return f'"{title}" is not available'
-    return f'"{title}" is not in here'
+    book, available = self._find_book(title)
+    if available:
+      return f'"{title}" is available'
+    else:
+      return f'"{title}" is not available'
 
   def info_books(self):
     counter = 1
-    for book in self.books:
+    for book, available in self.books.values():
       print(f'{counter}.')
       print(f'Title : {book.title}\nAuthor : {book.author}\nPublication year : {book.publication_year}')
       counter += 1
 
   def info_book(self, title):
-    for book in self.books:
-      if book.title == title:
-        return f'Ttile : {book.title}\nAuthor : {book.author}\nPublication year : {book.publication_year}' 
+    book, available = self._find_book(title)
+    if book:
+      return f'Ttile : {book.title}\nAuthor : {book.author}\nPublication year : {book.publication_year}' 
     return f'"{title}" is not in here'
 
 library = Library()
@@ -89,22 +89,33 @@ def for_developer():
       break
     else:
       author = input('Who is the author? ')
-      publication_year = input('when is the book publish? ')
-
+      while True:
+        try:
+          publication_year = int(input('when is the book publish? '))
+          if not 1000 < publication_year <= 2100:
+            raise Exception
+        except:
+          print('This is not a year')
+          continue
+        else:
+          break
+          
     book = Book(title, author, publication_year)
     library.add_book(book)
 
-    print('The book have been added to the library')
+    print('The book has been added to the library')
     print()
 
 def choices():
   print('Options : ')
+  print('-------------------------------------------------------')
   print('1. Borrow book')
   print('2. Return book')
   print('3. Checking availability of book')
   print('4. see all of the books')
   print('5. Checking information of book')
   print('6. Exit')
+  print('-------------------------------------------------------')
 
 def checking_user_input():
   global switch
