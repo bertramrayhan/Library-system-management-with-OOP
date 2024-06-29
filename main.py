@@ -1,5 +1,5 @@
 class Book:
-  def __init__(self, title, author, publication_year):
+  def __init__(self, title : str, author : str, publication_year : int):
     self.title = title
     self.author = author
     self.publication_year = publication_year
@@ -13,17 +13,26 @@ class Library:
     self.books = {}
   
   def add_book(self, book):
-    self.books[book] = True # True if available and False if not available
-
+    self.books[book.title] = (book, True) # True if available and False if not available
+    
+  '''
+  nanti bentuknya jadi :
+  judul : (object buku, availability)
+  '''
+  
+  def _find_book(self, title):
+    if title in self.books:
+      return self.books[title]
+    return None, None
+  
   def borrow_book(self, title):
-    for book in self.books:
-      if book.title == title:
-        if self.books[book]:
-          self.books[book] = False
-          return f'"{title}" is borrow by you'
-        else:
-          return 'This book is not available'
-    return f'{title} is not in here'
+    book, available = self._find_book(title)
+    if self.books[book]:
+      self.books[book] = False
+      return f'"{title}" is borrow by you'
+    else:
+        return 'This book is not available'
+    return 
 
   def return_book(self,title):
     for book in self.books:
@@ -41,6 +50,19 @@ class Library:
           return f'"{title}" is not available'
     return f'"{title}" is not in here'
 
+  def info_books(self):
+    counter = 1
+    for book in self.books:
+      print(f'{counter}.')
+      print(f'Title : {book.title}\nAuthor : {book.author}\nPublication year : {book.publication_year}')
+      counter += 1
+
+  def info_book(self, title):
+    for book in self.books:
+      if book.title == title:
+        return f'Ttile : {book.title}\nAuthor : {book.author}\nPublication year : {book.publication_year}' 
+    return f'"{title}" is not in here'
+
 library = Library()
 
 def borrow_book():
@@ -54,6 +76,10 @@ def return_book():
 def availability():
   user_input = input('What book do you want to check? ')
   return library.availability(user_input)
+
+def info_book():
+  user_input = input('What book do you want to know? ')
+  return library.info_book(user_input)
 
 def for_developer():
   global library
@@ -91,6 +117,10 @@ def checking_user_input():
     print(return_book())
   elif user_input == '3':
     print(availability())
+  elif user_input == '4':
+    library.info_books()
+  elif user_input == '5':
+    print(info_book())
   elif user_input == '6':
     switch = False
   else:
